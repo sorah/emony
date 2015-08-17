@@ -1,28 +1,21 @@
-# Emony
+# Emony: Real-time log aggregation
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/emony`. To experiment with that code, run `bin/console` for an interactive prompt.
+__NOTE:__ Early Development phase!
 
-TODO: Delete this and the text above, and describe your gem
+Emony aggregates log from servers and provides statistics in real-time.
+
+## Architecture
+
+- emony-master: Receives per-host statistics from server, aggregates statistics from all hosts, then provides API to get statistics
+- emony-collector: Aggregates log then send to emony-master. Configuration is downloaded from master.
 
 ## Installation
-
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'emony'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
 
     $ gem install emony
 
 ## Usage
 
-TODO: Write usage instructions here
+TBD
 
 ## Development
 
@@ -32,7 +25,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/emony.
+Bug reports and pull requests are welcome on GitHub at https://github.com/sorah/emony
 
 
 ## License
