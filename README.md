@@ -15,7 +15,100 @@ Emony aggregates log from servers and provides statistics in real-time.
 
 ## Usage
 
-TBD
+### Configuration
+
+(this is a planned one)
+
+#### Master
+
+``` yaml
+# vim: ft=yaml
+
+master:
+  listen_tcp: [::]:9755
+  listen_udp: [::]:9755
+
+web:
+  listen: [::]:9754
+  cors: '*.local'
+  # Specify directory of web ui, if you use awesome web ui
+  ui: /path/to/ui/directory
+
+templates:
+  default:
+    key: server_name
+
+    items:
+      reqtime:
+        type: numeric
+        options:
+          key: reqtime
+          multiply: 1000
+      requests:
+        type: count
+      rps:
+        type: count
+        options:
+          round: 1s
+      status:
+        type: valuecount
+        options:
+          key: status
+
+    # Use time from log?
+    time: time
+    # or
+    # realtime: true
+
+    dashboard:
+      type: generic_access_log
+
+    window:
+      - length: 4s
+        wait: 1s
+        retention: 12h
+
+    # sub groups (e.g. status for each server separately)
+    groups:
+      - type: reqpath
+        key: path
+        level: 2
+        replace_numbers: true
+      - type: kv
+        key: _hostname
+
+outputs:
+  - type: zabbix
+  - type: fluentd
+  - type: exec
+    command: your-favorite-output
+```
+
+### Aggregator
+
+``` yaml
+# vim: ft=yaml
+
+aggregator:
+  hostname: (optional)
+
+master:
+  tcp: master:9755
+  udp: master:9756
+
+inputs:
+  - type: udp
+    listen: [::]:9800
+  - type: tcp
+    listen: [::]:9800
+    default_template: webapp
+  - type: tail
+    file: /var/log/nginx/access.log
+    format: ltsv
+  - type: exec
+    command: ...
+    format: ltsv
+```
 
 ## Development
 
