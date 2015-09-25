@@ -49,7 +49,6 @@ module Emony
       def aggregate(data)
         raise NotImplementedError
       end
-      end
     end
   end
 end
