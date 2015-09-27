@@ -12,9 +12,10 @@ module Emony
         @finalized = false
 
         @result = nil
+        @state = nil
       end
 
-      attr_reader :result
+      attr_reader :result, :state
 
       def finalized?
         @finalized
@@ -33,16 +34,16 @@ module Emony
         end
       end
 
-      def merge(data)
+      def merge(state)
         @lock.synchronize do
           raise Finalized if finalized?
-          aggregate_merge(data)
+          aggregate_merge(state)
         end
       end
 
       private
 
-      def aggregate_merge(data)
+      def aggregate_merge(state)
         raise NotImplementedError
       end
 
