@@ -6,7 +6,7 @@ module Emony
       class Finalized < StandardError; end
 
       def initialize(options = {})
-        self.class.validate!
+        @options = options
 
         @lock = Mutex.new
         @finalized = false
