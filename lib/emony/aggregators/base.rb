@@ -37,7 +37,7 @@ module Emony
         @lock.synchronize do
           raise Finalized if finalized?
           aggregate_merge(data)
-        en
+        end
       end
 
       private
