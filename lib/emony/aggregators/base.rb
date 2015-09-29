@@ -25,6 +25,7 @@ module Emony
         @lock.synchronize do
           @finalized = true
         end
+        self
       end
 
       def add(data)
@@ -32,6 +33,7 @@ module Emony
           raise Finalized if finalized?
           aggregate(data)
         end
+        self
       end
 
       def merge(state)
@@ -39,6 +41,7 @@ module Emony
           raise Finalized if finalized?
           aggregate_merge(state)
         end
+        self
       end
 
       private
