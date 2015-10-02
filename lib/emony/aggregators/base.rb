@@ -28,10 +28,10 @@ module Emony
         self
       end
 
-      def add(data)
+      def add(record)
         @lock.synchronize do
           raise Finalized if finalized?
-          aggregate(data)
+          aggregate(record)
         end
         self
       end
@@ -50,7 +50,7 @@ module Emony
         raise NotImplementedError
       end
 
-      def aggregate(data)
+      def aggregate(record)
         raise NotImplementedError
       end
     end

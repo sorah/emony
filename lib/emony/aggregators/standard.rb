@@ -21,8 +21,8 @@ module Emony
         @options[:key]
       end
 
-      def aggregate(data)
-        n = data[key]
+      def aggregate(record)
+        n = record[key]
         return unless n.kind_of?(Numeric) # TODO
         @data[:total] += n
         @data[:count] += 1

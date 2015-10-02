@@ -10,7 +10,7 @@ module Emony
 
       alias state result
 
-      def aggregate(data)
+      def aggregate(record)
         @result += 1
       end
 
