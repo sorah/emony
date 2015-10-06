@@ -51,6 +51,7 @@ module Emony
       @lock.unlock if @lock.owned?
     end
 
+    # XXX: finalized? closed?
     def finalized?
       deadline < Time.now
     end
@@ -63,6 +64,7 @@ module Emony
       end
     end
 
+    # XXX: window requires loose check  but records aren't.
     def applicable_time?(time)
       start <= time && time <= finish
     end
