@@ -23,6 +23,10 @@ module Emony
       "#{start.to_i.to_s(36)}+#{duration}"
     end
 
+    def inspect
+      "#<Emony::Window[#{id}:#{wait}]#{finalized? ? ' finalized' : ''} start=#{start}>"
+    end
+
     def finish
       @finish ||= @start + @duration
     end
