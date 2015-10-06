@@ -20,7 +20,7 @@ module Emony
     attr_reader :start, :duration, :wait, :aggregators
 
     def id
-      "#{start.to_i.to_s(36)}+#{duration}"
+      @id ||= "#{start.to_i.to_s(36)}+#{duration}"
     end
 
     def inspect
