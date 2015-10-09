@@ -60,6 +60,14 @@ module Emony
       deadline < Time.now
     end
 
+    def waiting?
+      start <= Time.now && finished? && !finalized?
+    end
+
+    def finished?
+      finish <= Time.now
+    end
+
     def finalized_window
       if finalized?
         FinalizedWindow.from_window self
@@ -77,6 +85,10 @@ module Emony
       applicable_time? record.time
     end
 
+    def applicable_window?(window)
+      applicable_time?(window.start) && applicable_time?(window.finish)
+    end
+
     def add(record)
       raise NotApplicable unless applicable?(record) # XXX:
       @lock.synchronize do
@@ -88,7 +100,7 @@ module Emony
     end
 
     def merge(window)
-      raise NotApplicable unless applicable_time?(window.start) && applicable_time?(window.finish)
+      raise NotApplicable unless applicable_window?(window)
       @lock.synchronize do
         raise Finalized if finalized?
 
