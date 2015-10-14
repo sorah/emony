@@ -1,4 +1,5 @@
 require 'yaml'
+require 'emony/tag_matching/matcher'
 
 module Emony
   class Configuration
@@ -8,10 +9,27 @@ module Emony
 
     def initialize(hash={})
       @hash = symbolize_keys!(hash)
+      @hash[:aggregations] ||= {}
+      @rule_matcher = TagMatching::Matcher.new(@hash[:aggregations].keys)
     end
 
     def [](k)
       @hash[k]
+    end
+
+    def aggregation_rule_for_tag(tag, pattern: true)
+      # TODO: cache
+      # XXX: to_sym
+      if pattern
+        match = @rule_matcher.find(tag)
+        if match
+          @hash[:aggregations][match.to_sym]
+        else
+          nil
+        end
+      else
+        @hash[:aggregations][tag.to_sym]
+      end
     end
 
     private
