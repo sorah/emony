@@ -12,12 +12,17 @@ module Emony
       @wait = wait.to_i
       @aggregators = aggregators
 
+      @empty = true
       @lock = Mutex.new
 
       raise ArgumentError, "`wait` shouldn't be longer than `duration`" if @duration < @wait
     end
 
     attr_reader :start, :duration, :wait, :aggregators
+
+    def empty?
+      @empty
+    end
 
     def id
       @id ||= "#{start.to_i.to_s(36)}+#{duration}"
@@ -96,6 +101,7 @@ module Emony
         aggregators.each do |k, agg|
           agg.add record
         end
+        @empty = false
       end
     end
 
@@ -107,6 +113,7 @@ module Emony
         aggregators.each do |k, agg|
           agg.merge window.state[k] if window.state[k] # TODO: warn?
         end
+        @empty = false
       end
     end
   end

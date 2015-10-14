@@ -123,12 +123,14 @@ describe Emony::WindowScheduler do
       set_time time
       window_scheduler.tick
       active = window_scheduler.active
+      active.add Emony::Record.new({t: active.start + 1}, time_key: :t)
 
       set_time time + 10 + 1
       window_scheduler.tick
       set_time time + 10 + 1 + 5
       window_scheduler.tick
       active2 = window_scheduler.active
+      active2.add Emony::Record.new({t: active2.start + 1}, time_key: :t)
 
       expect(windows).to eq([active])
 
@@ -150,12 +152,14 @@ describe Emony::WindowScheduler do
         set_time time
         window_scheduler.tick
         active = window_scheduler.active
+        active.add Emony::Record.new({t: active.start + 1}, time_key: :t)
 
         set_time time + 10 + 1
         window_scheduler.tick
         set_time time + 10 + 1 + 5
         window_scheduler.tick
         active2 = window_scheduler.active
+        active2.add Emony::Record.new({t: active2.start + 1}, time_key: :t)
 
         expect(windows).to eq([active])
 
@@ -163,6 +167,29 @@ describe Emony::WindowScheduler do
         window_scheduler.tick
 
         expect(windows).to eq([active, active2])
+      end
+    end
+
+    context "for finalized empty windows" do
+      specify "passed block won't get called" do
+        windows = []
+        window_scheduler.on_result do |window|
+          windows << window
+        end
+
+        set_time time
+        window_scheduler.tick
+        set_time time + 10 + 1
+        window_scheduler.tick
+        set_time time + 10 + 1 + 5
+        window_scheduler.tick
+
+        expect(windows).to eq([])
+
+        set_time time + 30
+        window_scheduler.tick
+
+        expect(windows).to eq([])
       end
     end
   end

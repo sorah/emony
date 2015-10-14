@@ -53,13 +53,13 @@ module Emony
       # TODO: when tick couldn't run continously, window may have lacked
 
       if @waiting && @waiting.finalized?
-        @on_result.call @waiting
+        @on_result.call(@waiting) unless @waiting.empty?
         @waiting = nil
       end
 
       case
       when @active.finalized?
-        @on_result.call @active
+        @on_result.call(@active) unless @active.empty?
         @active = nil
       when @active.waiting?
         @waiting = @active
