@@ -1,10 +1,12 @@
 require 'emony/tag_matching/rules'
+require 'emony/tag_matching/cache'
 
 module Emony
   module TagMatching
     class Matcher
-      def initialize(rules)
+      def initialize(rules, cache: Cache.new)
         @rules = rules.map { |rule| rule.kind_of?(Rules::Base) ? rule : Rules.create(rule) }
+        @cache = cache
       end
       
       def match?(tag)
@@ -12,10 +14,16 @@ module Emony
       end
 
       def find(tag)
-        @rules.each do |rule|
-          return rule.to_s if rule.match?(tag)
+        @cache.fetch(tag) do
+          r = nil
+          @rules.each do |rule|
+            if rule.match?(tag)
+              r = rule.to_s
+              break
+            end
+          end
+          r
         end
-        nil
       end
     end
   end
