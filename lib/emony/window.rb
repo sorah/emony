@@ -1,4 +1,5 @@
 require 'thread'
+require 'emony/label'
 require 'emony/finalized_window'
 
 module Emony
@@ -7,7 +8,7 @@ module Emony
     class NotApplicable < StandardError; end
 
     def initialize(label, start: , duration: , wait: 0, aggregators: {})
-      @label = label
+      @label = Emony::Label(label)
       @start = Time.at(start.to_i) # drop usec
       @duration = duration.to_i
       @wait = wait.to_i

@@ -1,11 +1,12 @@
 require 'thread'
 require 'emony/window'
+require 'emony/label'
 
 module Emony
   class WindowScheduler
     def initialize(label, specification)
       @lock = Mutex.new
-      @label = label
+      @label = Emony::Label(label)
       @specification = specification
       @on_result = proc { }
       @on_no_recent_record = proc { }
