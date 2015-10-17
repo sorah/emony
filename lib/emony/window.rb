@@ -6,7 +6,8 @@ module Emony
     class Finalized < StandardError; end
     class NotApplicable < StandardError; end
 
-    def initialize(start: , duration: , wait: 0, aggregators: {})
+    def initialize(label, start: , duration: , wait: 0, aggregators: {})
+      @label = label
       @start = Time.at(start.to_i) # drop usec
       @duration = duration.to_i
       @wait = wait.to_i
@@ -18,7 +19,7 @@ module Emony
       raise ArgumentError, "`wait` shouldn't be longer than `duration`" if @duration < @wait
     end
 
-    attr_reader :start, :duration, :wait, :aggregators
+    attr_reader :label, :start, :duration, :wait, :aggregators
 
     def empty?
       @empty

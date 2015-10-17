@@ -3,8 +3,9 @@ require 'emony/window'
 
 module Emony
   class WindowScheduler
-    def initialize(specification)
+    def initialize(label, specification)
       @lock = Mutex.new
+      @label = label
       @specification = specification
       @on_result = proc { }
       @on_no_recent_record = proc { }
@@ -15,7 +16,7 @@ module Emony
       tick
     end
 
-    attr_reader :active, :waiting, :specification
+    attr_reader :label, :active, :waiting, :specification
 
     def on_result(&block)
       @on_result = block
@@ -83,7 +84,7 @@ module Emony
     private
 
     def new_window(time: Time.now)
-      Window.new(start: time, **specification)
+      Window.new(label, start: time, **specification)
     end
 
     def make_result(window)

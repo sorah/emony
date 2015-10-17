@@ -8,7 +8,7 @@ require 'emony/record'
 describe Emony::WindowScheduler do
   let(:time) { Time.now }
   let(:window_specification) { {duration: 10, wait: 2} }
-  subject(:window_scheduler) { described_class.new(window_specification) }
+  subject(:window_scheduler) { described_class.new('label', window_specification) }
 
   def set_time(t)
     @time = t
@@ -68,7 +68,7 @@ describe Emony::WindowScheduler do
 
   describe "#merge" do
     context "with window in active window period" do
-      let(:window) { Emony::Window.new(start: time + 1, duration: 3) }
+      let(:window) { Emony::Window.new('label', start: time + 1, duration: 3) }
 
       it "merges to active window" do
         expect(window_scheduler.active).to receive(:merge).with(window)
@@ -80,7 +80,7 @@ describe Emony::WindowScheduler do
     # TODO: test overlapping window
 
     context "with window in waiting window period" do
-      let(:window) { Emony::Window.new(start: time + 1, duration: 3) }
+      let(:window) { Emony::Window.new('label', start: time + 1, duration: 3) }
 
       before do
         window_scheduler.tick
@@ -97,7 +97,7 @@ describe Emony::WindowScheduler do
     end
 
     context "with record in inactive period" do
-      let(:window) { Emony::Window.new(start: time - 100, duration: 3) }
+      let(:window) { Emony::Window.new('label', start: time - 100, duration: 3) }
 
       before do
         window_scheduler.tick

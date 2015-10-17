@@ -8,7 +8,7 @@ describe Emony::Window do
 
   let(:start_time) { Time.at(Time.now.to_i) } # XXX:
 
-  subject(:window) { described_class.new(start: start_time, duration: 10, wait: 2, aggregators: {a: aggregator_a, b: aggregator_b}) }
+  subject(:window) { described_class.new('label', start: start_time, duration: 10, wait: 2, aggregators: {a: aggregator_a, b: aggregator_b}) }
 
   describe "#id" do
     subject { window.id }
