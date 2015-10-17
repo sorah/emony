@@ -13,8 +13,9 @@ module Emony
         !!find(tag)
       end
 
-      def find(tag)
-        @cache.fetch(tag) do
+      def find(tag_or_label)
+        @cache.fetch(tag_or_label) do
+          tag = tag_or_label.to_s.gsub(/(:.+)?(@\d+)?\z/, '') # XXX:
           r = nil
           @rules.each do |rule|
             if rule.match?(tag)
