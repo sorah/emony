@@ -194,6 +194,41 @@ describe Emony::WindowScheduler do
     end
   end
 
+  describe "#on_no_recent_record" do
+    it "accepts block, and block gets called when 2 empty windows are finalized continously" do
+      calls = 0
+      window_scheduler.on_no_recent_record do
+        calls += 1
+      end
+
+      set_time time
+      window_scheduler.tick
+
+      set_time time + 10 + 2 + 1
+      window_scheduler.tick
+      expect(calls).to eq(0)
+
+      set_time time + 10 + 2 + 10
+      window_scheduler.tick
+      expect(calls).to eq(0)
+
+      set_time time + 10 + 2 + 10 + 2 + 1
+      window_scheduler.tick
+      expect(calls).to eq(1)
+
+      set_time time + 10 + 2 + 10 + 2 + 10 + 2 + 1
+      window_scheduler.tick
+      expect(calls).to eq(2)
+
+      window_scheduler.active.add Emony::Record.new({t: window_scheduler.active.start + 1}, time_key: :t)
+
+      set_time time + 10 + 2 + 10 + 2 + 10 + 2 + 10 + 2 + 1
+      window_scheduler.tick
+      expect(calls).to eq(2)
+    end
+  end
+
+
   describe "#tick" do
     it "slides window as required" do
       active, waiting = window_scheduler.active, window_scheduler.waiting

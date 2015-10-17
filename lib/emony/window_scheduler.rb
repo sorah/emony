@@ -7,6 +7,9 @@ module Emony
       @lock = Mutex.new
       @specification = specification
       @on_result = proc { }
+      @on_no_recent_record = proc { }
+
+      @empty_window_count = 0
 
       @active, @waiting = new_window, nil
       tick
@@ -16,6 +19,10 @@ module Emony
 
     def on_result(&block)
       @on_result = block
+    end
+
+    def on_no_recent_record(&block)
+      @on_no_recent_record = block
     end
 
     def add(record)
@@ -53,13 +60,13 @@ module Emony
       # TODO: when tick couldn't run continously, window may have lacked
 
       if @waiting && @waiting.finalized?
-        @on_result.call(@waiting) unless @waiting.empty?
+        make_result(@waiting)
         @waiting = nil
       end
 
       case
       when @active.finalized?
-        @on_result.call(@active) unless @active.empty?
+        make_result(@active)
         @active = nil
       when @active.waiting?
         @waiting = @active
@@ -77,6 +84,18 @@ module Emony
 
     def new_window(time: Time.now)
       Window.new(start: time, **specification)
+    end
+
+    def make_result(window)
+      if window.empty?
+        @empty_window_count += 1
+        if @empty_window_count > 1
+          @on_no_recent_record.call
+        end
+      else
+        @empty_window_count = 0
+        @on_result.call(window)
+      end
     end
   end
 end
