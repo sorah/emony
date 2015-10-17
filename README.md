@@ -59,8 +59,13 @@ aggregations:
     time: time
 
     window:
-      - length: 4s
-        wait: 1s
+      duration: 5
+      wait: 1
+    sub_windows:
+      - duration: 60
+        wait: 5
+      - duration: 3600
+        wait: 60
 
     # sub groups (e.g. status for each server separately)
     groups:
