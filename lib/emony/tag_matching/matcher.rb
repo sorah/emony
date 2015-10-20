@@ -1,5 +1,6 @@
 require 'emony/tag_matching/rules'
 require 'emony/tag_matching/cache'
+require 'emony/tag_parser'
 
 module Emony
   module TagMatching
@@ -14,8 +15,8 @@ module Emony
       end
 
       def find(tag_or_label)
-        @cache.fetch(tag_or_label) do
-          tag = tag_or_label.to_s.gsub(/(:.+)?(@\d+)?\z/, '') # XXX: TODO: use tag_parser
+        tag = TagParser.parse(tag_or_label)[:tag]
+        @cache.fetch(tag) do
           r = nil
           @rules.each do |rule|
             if rule.match?(tag)
