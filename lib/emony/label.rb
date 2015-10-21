@@ -4,7 +4,7 @@ module Emony
   def self.Label(obj)
     case obj
     when Label
-      self
+      obj
     else
       Label.from_string obj.to_s
     end
