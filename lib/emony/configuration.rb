@@ -1,8 +1,11 @@
 require 'yaml'
 require 'emony/tag_matching/matcher'
+require 'emony/tag_parser'
 
 module Emony
   class Configuration
+    class ConfigurationMissing < StandardError; end
+
     def self.load_file(path)
       self.new YAML.load_file(path)
     end
@@ -17,18 +20,39 @@ module Emony
       @hash[k]
     end
 
-    def aggregation_rule_for_tag(tag, pattern: true)
+    # XXX:
+    def window_specification_for_label(label)
+      rule = aggregation_rule_for_tag(label, error: true)
+
+      window_rule = if label.duration
+                      (rule[:sub_windows] || []).find { |_| _[:duration].to_i == label.duration }
+                    else
+                      rule[:window]
+                    end
+
+      {
+        aggregators: rule[:items] || {},
+      }.merge(window_rule)
+    end
+
+    def aggregation_rule_for_tag(tag, pattern: true, error: false)
       # TODO: cache
       # XXX: to_sym
       if pattern
+        # XXX: rule_matcher -> tag_matcher
         match = @rule_matcher.find(tag)
         if match
           @hash[:aggregations][match.to_sym]
         else
-          nil
+          if error
+            raise ConfigurationMissing, "Missing configuration for label #{tag.inspect}"
+          else
+            nil
+          end
         end
       else
-        @hash[:aggregations][tag.to_sym]
+        @hash[:aggregations][tag.to_sym] \
+          or raise ConfigurationMissing, "Missing configuration for label #{tag.inspect}"
       end
     end
 

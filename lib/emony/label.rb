@@ -40,5 +40,13 @@ module Emony
         s
       end
     end
+
+    def to_h
+      {tag: @tag, group: @group, group_key: @group_key, duration: @duration}
+    end
+
+    def variant_with(**options)
+      self.class.new **self.to_h.merge(options)
+    end
   end
 end
