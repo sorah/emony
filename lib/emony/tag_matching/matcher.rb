@@ -2,6 +2,8 @@ require 'emony/tag_matching/rules'
 require 'emony/tag_matching/cache'
 require 'emony/tag_parser'
 
+require 'emony/label'
+
 module Emony
   module TagMatching
     class Matcher
@@ -15,7 +17,12 @@ module Emony
       end
 
       def find(tag_or_label)
-        tag = TagParser.parse(tag_or_label)[:tag]
+        tag = case tag_or_label
+              when Label
+                tag_or_label.tag
+              else
+                TagParser.parse(tag_or_label)[:tag]
+              end
         @cache.fetch(tag) do
           r = nil
           @rules.each do |rule|
