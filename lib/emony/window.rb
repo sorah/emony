@@ -1,6 +1,7 @@
 require 'thread'
 require 'emony/label'
 require 'emony/finalized_window'
+require 'emony/aggregators'
 
 module Emony
   class Window
@@ -12,7 +13,13 @@ module Emony
       @start = Time.at(start.to_i) # drop usec
       @duration = duration.to_i
       @wait = wait.to_i
-      @aggregators = aggregators
+
+      @aggregators = aggregators.dup
+      @aggregators.each do |k,v|
+        if v.kind_of?(Hash)
+          @aggregators[k] = Emony::Aggregators.find(v[:type]).new(v)
+        end
+      end
 
       @empty = true
       @lock = Mutex.new
