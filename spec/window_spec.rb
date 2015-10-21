@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'emony/aggregators'
 require 'emony/finalized_window'
 require 'emony/window'
 
@@ -9,6 +10,30 @@ describe Emony::Window do
   let(:start_time) { Time.at(Time.now.to_i) } # XXX:
 
   subject(:window) { described_class.new('label', start: start_time, duration: 10, wait: 2, aggregators: {a: aggregator_a, b: aggregator_b}) }
+
+  describe "#aggregators" do
+    context "when initialied with Hash values" do
+      before do
+        allow(Emony::Aggregators).to receive(:find).with('agg').and_return(aggregator_class)
+      end
+
+      let(:aggregator_class) do
+        Class.new do
+          def initialize(*args)
+            @args = args
+          end
+
+          attr_reader :args
+        end
+      end
+      let(:aggregator_a) { {type: 'agg', option: 1} }
+
+      it "finds aggregator class and instantiate that" do
+        expect(window.aggregators[:a]).to be_a(aggregator_class)
+        expect(window.aggregators[:a].args).to eq([{type: 'agg', option: 1}])
+      end
+    end
+  end
 
   describe "#id" do
     subject { window.id }
