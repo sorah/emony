@@ -1,15 +1,22 @@
 module Emony
   class Record
-    def initialize(data, time_key: nil)
+    def initialize(data, time_key: nil, tag: nil, config: nil)
       @data = data
-      @time_key = time_key
+      @tag = tag
+      @time_key = time_key || determine_time_key(config)
+
+      unless @time_key
+        @time = Time.now
+      end
     end
+
+    # TODO: test
 
     def time
       @time ||= parse_time
     end
 
-    attr_reader :data
+    attr_reader :data, :tag
 
     def [](k)
       @data[k]
@@ -24,10 +31,17 @@ module Emony
         d
       when String
         Time.parse(d)
-      when nil
-        nil # TODO:
       else
-        nil # TODO:
+        raise "[BUG] parse_time called with #{d.inspect}"
+      end
+    end
+
+    def determine_time_key(config)
+      if config
+        rule = config.aggregation_rule_for_tag(@tag)
+        rule && rule[:time]
+      else
+        nil
       end
     end
   end
