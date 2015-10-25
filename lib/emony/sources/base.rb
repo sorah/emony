@@ -9,6 +9,7 @@ module Emony
       end
 
       attr_reader :options, :config
+      attr_accessor :on_record
 
       def start
         raise NotImplementedError
@@ -25,7 +26,10 @@ module Emony
       private
 
       def create_record(tag, data)
-        Emony::Record.new(data, tag: tag, config: @config)
+        record = Emony::Record.new(data, tag: tag, config: @config)
+        if on_record
+          on_record.call record
+        end
       end
     end
   end

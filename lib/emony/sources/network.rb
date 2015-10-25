@@ -70,7 +70,11 @@ module Emony
       private
 
       def process_message(client, message)
-        p [:process_message, message]
+        # TODO: hostname key
+        case
+        when message['data'] && message['tag']
+          create_record message['tag'], message['data']
+        end
 
         id = message.kind_of?(Hash) && message['id']
         client.send(ack: {id: id})
