@@ -13,7 +13,7 @@ module Emony
       def initialize(*)
         super
         @options[:format] = @options[:format].to_sym if @options[:format]
-        @options[:protocol] = @options[:protocol].map(&:to_sym) if @options[:protocol]
+        @options[:protocol] = [*@options[:protocol]].map(&:to_sym) if @options[:protocol]
 
         @tcp_server, @udp_server = nil, nil
 
