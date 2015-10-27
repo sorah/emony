@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+require 'emony/configuration'
+require 'emony/engine'
+
+config = Emony::Configuration.new(
+  sources: [
+    {
+      type: :network,
+    }
+  ],
+  aggregations: {
+    '*' => {
+      window: {duration: 5, wait: 1},
+      items: {
+        count: {type: :count},
+        n: {type: :standard, key: 'n'},
+      },
+    },
+  },
+  outputs: {
+    '*' => {type: :stdout},
+  },
+)
+engine = Emony::Engine.new(config)
+engine.prepare
+engine.run
