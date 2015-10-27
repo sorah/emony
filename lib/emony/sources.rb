@@ -1,9 +1,9 @@
 require 'emony/utils/finder'
 
 module Emony
-  module Aggregators
+  module Sources
     def self.find(name)
-      Utils::Finder.find(self, 'emony/aggregators', name)
+      Utils::Finder.find(self, 'emony/sources', name)
     end
   end
 end
