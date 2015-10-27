@@ -12,6 +12,10 @@ module Emony
       @start + @duration
     end
 
+    def finalized_window
+      self
+    end
+
     attr_reader :id, :start, :duration, :state, :result
   end
 end
