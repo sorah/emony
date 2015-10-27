@@ -8,11 +8,13 @@ module Emony
       @config = config
       @ticker = ticker
 
+      @on_new_window_scheduler = proc {}
       @schedulers = {}
       @lock = Mutex.new
     end
 
     attr_reader :config
+    attr_accessor :on_new_window_scheduler
 
     # TODO: GC
 
@@ -37,6 +39,7 @@ module Emony
         specification = @config.window_specification_for_label(label)
 
         @schedulers[label.to_s] = sched = WindowScheduler.new(label, specification)
+        @on_new_window_scheduler.call sched
         @ticker.register sched
 
         sched

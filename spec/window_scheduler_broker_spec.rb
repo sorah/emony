@@ -90,4 +90,19 @@ describe Emony::WindowSchedulerBroker do
       expect(schedulers[1].label.to_s).to eq 'bar@300'
     end
   end
+
+  describe "#on_new_window_scheduler" do
+    it "accepts block and the block will be called when new WindowScheduler initialized" do
+      calls = []
+      broker.on_new_window_scheduler = proc do |obj|
+        calls << obj
+      end
+
+      sched = broker.get('foo')
+      expect(calls).to eq([sched])
+
+      broker.get('foo')
+      expect(calls).to eq([sched])
+    end
+  end
 end
