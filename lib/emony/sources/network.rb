@@ -247,10 +247,16 @@ module Emony
 
           def feed_data_json(data)
             @parser << data
+          rescue Yajl::ParseError
+            # TODO: log
+            sock.close
           end
 
           def feed_data_msgpack(data)
             @parser.feed_each(data, &method(:process_message))
+          rescue MessagePack::UnpackError, MessagePack::TypeError
+            # TODO: log
+            sock.close
           end
 
           def process_message(data)
