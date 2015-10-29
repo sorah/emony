@@ -27,7 +27,7 @@ module Emony
     def run
       raise "[BUG] have to prepared" unless @ready
 
-      output_router.setup
+      output_router.start
       window_scheduler_ticker.start
       sources.each(&:start)
 
@@ -36,7 +36,7 @@ module Emony
       # sources.map { |s| Thread.new(s, &:stop) }.each(&:join)
       sources.each(&:stop)
       window_scheduler_ticker.stop
-      output_router.teardown
+      output_router.stop
     ensure
       teardown
     end
