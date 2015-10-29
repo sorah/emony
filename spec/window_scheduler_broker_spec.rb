@@ -89,6 +89,14 @@ describe Emony::WindowSchedulerBroker do
       expect(schedulers[1].spec[:duration]).to eq 300
       expect(schedulers[1].label.to_s).to eq 'bar@300'
     end
+
+    context "for subwindows" do
+      subject(:schedulers) { broker.get_for_subwindows(Emony::Label('bar@10')) }
+
+      it "doesn't return anything" do
+        expect(schedulers).to eq([])
+      end
+    end
   end
 
   describe "#on_new_window_scheduler" do

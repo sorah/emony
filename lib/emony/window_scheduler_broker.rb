@@ -25,8 +25,13 @@ module Emony
 
     def get_for_subwindows(label) # XXX: naming
       # XXX: do this in configuration?
-      (config.aggregation_rule_for_tag(label, error: true)[:sub_windows] || []).map do |window_spec|
-        get Emony::Label(label).variant_with(duration: window_spec[:duration])
+      if label.primary?
+        (config.aggregation_rule_for_tag(label, error: true)[:sub_windows] || []).map do |window_spec|
+          label = Emony::Label(label).variant_with(duration: window_spec[:duration])
+          get(label)
+        end
+      else
+        []
       end
     end
 
