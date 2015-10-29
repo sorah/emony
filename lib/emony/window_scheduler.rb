@@ -4,6 +4,7 @@ require 'emony/label'
 
 module Emony
   class WindowScheduler
+    # TODO: fix timing of window start on initialize
     def initialize(label, specification)
       @lock = Mutex.new
       @label = Emony::Label(label)
