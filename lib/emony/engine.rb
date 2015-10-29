@@ -1,6 +1,7 @@
 require 'thread'
 
 require 'emony/sources'
+require 'emony/message_router'
 require 'emony/output_router'
 require 'emony/window_scheduler_ticker'
 require 'emony/window_scheduler_broker'
@@ -29,12 +30,14 @@ module Emony
 
       output_router.start
       window_scheduler_ticker.start
+      message_router.start
       sources.each(&:start)
 
       @stop.pop
 
       # sources.map { |s| Thread.new(s, &:stop) }.each(&:join)
       sources.each(&:stop)
+      message_router.stop
       window_scheduler_ticker.stop
       output_router.stop
     ensure
@@ -49,8 +52,7 @@ module Emony
     end
 
     def on_record(record)
-      scheduler = window_scheduler_broker.get(record.tag)
-      scheduler.add record # TODO: async
+      message_router.add record
     end
 
     def on_new_window_scheduler(scheduler)
@@ -77,6 +79,10 @@ module Emony
       @window_scheduler_broker ||= WindowSchedulerBroker.new(@config, window_scheduler_ticker).tap do |broker|
         broker.on_new_window_scheduler = method(:on_new_window_scheduler)
       end
+    end
+
+    def message_router
+      @message_router ||= MessageRouter.new(window_scheduler_broker)
     end
 
     def output_router
