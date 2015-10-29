@@ -50,7 +50,7 @@ module Emony
 
     def on_record(record)
       scheduler = window_scheduler_broker.get(record.tag)
-      scheduler.add record
+      scheduler.add record # TODO: async
     end
 
     def on_new_window_scheduler(scheduler)
