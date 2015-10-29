@@ -41,6 +41,8 @@ module Emony
       "#<Emony::Window[#{id}:#{wait}]#{finalized? ? ' finalized' : ''} start=#{start}>"
     end
 
+    alias to_s inspect
+
     def finish
       @finish ||= @start + @duration
     end

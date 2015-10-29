@@ -20,6 +20,11 @@ module Emony
 
     attr_reader :label, :active, :waiting, :specification
 
+    def inspect
+      "#<#{self.class}[#{label}] active=#{active.inspect} waiting=#{waiting.inspect}>"
+    end
+    alias to_s inspect
+
     def on_result(&block)
       @on_result = block
     end
