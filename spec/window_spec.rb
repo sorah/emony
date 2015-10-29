@@ -152,6 +152,28 @@ describe Emony::Window do
     # TODO:
   end
 
+  describe "#gap_with_window" do
+    subject(:window) { described_class.new('label', start: start_time, duration: 3, wait: 0) }
+
+    # dbca012345
+    # ---  4
+    #   ---  2
+    #     -  0
+    #     ===
+    #      -  0
+    #      ---  1
+    #         ---  4
+    #    -----  -2
+
+    specify { expect(window.gap_with_window(double('window', start: start_time - 4, finish: start_time - 1))).to eq 4 }
+    specify { expect(window.gap_with_window(double('window', start: start_time - 2, finish: start_time + 1))).to eq 2 }
+    specify { expect(window.gap_with_window(double('window', start: start_time + 0, finish: start_time + 1))).to eq 0 }
+    specify { expect(window.gap_with_window(double('window', start: start_time + 1, finish: start_time + 2))).to eq 0 }
+    specify { expect(window.gap_with_window(double('window', start: start_time + 1, finish: start_time + 4))).to eq 1 }
+    specify { expect(window.gap_with_window(double('window', start: start_time + 4, finish: start_time + 7))).to eq 4 }
+    specify { expect(window.gap_with_window(double('window', start: start_time - 1, finish: start_time + 4))).to eq -2 }
+  end
+
   describe "#add" do
     context "with record at applicable time" do
       let(:record) { double('record', time: start_time + 2) }

@@ -8,11 +8,12 @@ module Emony
     class Finalized < StandardError; end
     class NotApplicable < StandardError; end
 
-    def initialize(label, start: , duration: , wait: 0, aggregators: {})
+    def initialize(label, start: , duration: , wait: 0, allowed_gap: 0, aggregators: {})
       @label = Emony::Label(label)
       @start = Time.at(start.to_i) # drop usec
       @duration = duration.to_i
       @wait = wait.to_i
+      @allowed_gap = allowed_gap.to_i
 
       @aggregators = aggregators.dup
       @aggregators.each do |k,v|
@@ -27,7 +28,7 @@ module Emony
       raise ArgumentError, "`wait` shouldn't be longer than `duration`" if @duration < @wait
     end
 
-    attr_reader :label, :start, :duration, :wait, :aggregators
+    attr_reader :label, :start, :duration, :wait, :aggregators, :allowed_gap
 
     def empty?
       @empty
@@ -102,7 +103,31 @@ module Emony
     end
 
     def applicable_window?(window)
+      # TODO: test
+      applicable_window_perfectly?(window) || applicable_window_on_gap?(window)
+    end
+
+    def applicable_window_perfectly?(window)
       applicable_time?(window.start) && applicable_time?(window.finish)
+    end
+
+    def applicable_window_on_gap?(window)
+      gap_with_window(window).abs < @allowed_gap
+    end
+
+    def gap_with_window(window)
+      return 0 if applicable_window_perfectly?(window)
+
+      before_r = self.start - window.start
+      after_r = window.finish - self.finish
+      before = [0, before_r].min.abs
+      after = [0, after_r].min.abs
+
+      if before.zero? ^ after.zero?
+        before + after
+      else
+        -(before_r.abs + after_r.abs)
+      end
     end
 
     def add(record)
