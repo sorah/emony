@@ -47,6 +47,13 @@ module Emony
     end
 
     def perform_propagate(window)
+      @broker.get_for_subwindows(window.label, init_time: window.start).each do |scheduler|
+        begin
+          scheduler.merge window
+        rescue Emony::Window::NotApplicable
+          warn "WARN: #{window} -> #{scheduler} not applicable!"
+        end
+      end
     end
   end
 end

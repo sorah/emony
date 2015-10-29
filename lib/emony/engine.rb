@@ -61,6 +61,7 @@ module Emony
 
     def on_finalized_window(window)
       output_router.put window
+      message_router.propagate window
     end
 
     def sources

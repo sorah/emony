@@ -18,17 +18,17 @@ module Emony
 
     # TODO: GC
 
-    def get(label)
+    def get(label, init_time: nil)
       label = Emony::Label(label)
-      @schedulers[label.to_s] || create(label)
+      @schedulers[label.to_s] || create(label, init_time: init_time)
     end
 
-    def get_for_subwindows(label) # XXX: naming
+    def get_for_subwindows(label, init_time: nil) # XXX: naming
       # XXX: do this in configuration?
       if label.primary?
         (config.aggregation_rule_for_tag(label, error: true)[:sub_windows] || []).map do |window_spec|
           label = Emony::Label(label).variant_with(duration: window_spec[:duration])
-          get(label)
+          get(label, init_time: init_time)
         end
       else
         []
@@ -37,13 +37,13 @@ module Emony
 
     private
 
-    def create(label)
+    def create(label, init_time: nil)
       @lock.synchronize do
         return @schedulers[label.to_s] if @schedulers[label.to_s]
 
         specification = @config.window_specification_for_label(label)
 
-        @schedulers[label.to_s] = sched = WindowScheduler.new(label, specification)
+        @schedulers[label.to_s] = sched = WindowScheduler.new(label, specification, init_time: init_time)
         @on_new_window_scheduler.call sched
         @ticker.register sched
 

@@ -5,16 +5,17 @@ require 'emony/label'
 module Emony
   class WindowScheduler
     # TODO: fix timing of window start on initialize
-    def initialize(label, specification)
+    def initialize(label, specification, init_time: nil)
       @lock = Mutex.new
       @label = Emony::Label(label)
       @specification = specification
       @on_result = proc { }
       @on_no_recent_record = proc { }
+      @init_time = init_time
 
       @empty_window_count = 0
 
-      @active, @waiting = new_window, nil
+      @active, @waiting = new_window(time: @init_time || Time.now), nil
       tick
     end
 
