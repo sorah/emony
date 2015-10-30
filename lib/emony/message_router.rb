@@ -7,8 +7,9 @@ module Emony
     include Emony::Utils::OperationThreadable
     # TODO: test
 
-    def initialize(window_scheduler_broker)
+    def initialize(window_scheduler_broker, grouper_cache)
       @broker = window_scheduler_broker
+      @grouper_cache = grouper_cache
 
       @lock = Mutex.new
       init_operation_threading
@@ -44,6 +45,17 @@ module Emony
         @broker.get(record.tag).add(record)
       rescue Emony::Window::NotApplicable, Emony::Window::Finalized => e
         warn "WARN: #{record.tag} #{e.inspect}"
+      end
+
+      @grouper_cache.tag(record.tag).each do |grouper|
+        group_label = grouper.determine_group_label(record)
+        if group_label
+          begin
+            @broker.get(group_label).add(record)
+          rescue Emony::Window::NotApplicable, Emony::Window::Finalized => e
+            warn "WARN: #{record.tag} #{e.inspect}"
+          end
+        end
       end
     end
 

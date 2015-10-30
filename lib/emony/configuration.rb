@@ -35,12 +35,16 @@ module Emony
       }.merge(window_rule)
     end
 
+    def rule_name_for_tag(tag)
+      @rule_matcher.find(tag)
+    end
+
     def aggregation_rule_for_tag(tag, pattern: true, error: false)
       # TODO: cache
       # XXX: to_sym
       if pattern
         # XXX: rule_matcher -> tag_matcher
-        match = @rule_matcher.find(tag)
+        match = rule_name_for_tag(tag)
         if match
           @hash[:aggregations][match.to_sym]
         else

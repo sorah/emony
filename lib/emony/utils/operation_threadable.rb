@@ -63,6 +63,7 @@ module Emony
 
       def main_loop
         while op = @queue.pop
+          #p [self.class, @queue.size] if @queue.size != 0
           break if thread_should_stop?
 
           if op == :stop
