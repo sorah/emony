@@ -16,6 +16,7 @@ module Emony
       end
 
       def busy?
+        # TODO: use this (Outputs::Base#busy?)
         false
       end
 

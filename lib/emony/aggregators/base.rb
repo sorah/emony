@@ -13,6 +13,7 @@ module Emony
 
         @result = nil
         @state = nil
+        # TODO: configuration validator
       end
 
       attr_reader :result, :state
