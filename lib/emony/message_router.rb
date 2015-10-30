@@ -40,7 +40,11 @@ module Emony
     end
 
     def perform_add(record)
-      @broker.get(record.tag).add(record)
+      begin
+        @broker.get(record.tag).add(record)
+      rescue Emony::Window::NotApplicable, Emony::Window::Finalized => e
+        warn "WARN: #{record.tag} #{e.inspect}"
+      end
     end
 
     def perform_merge(window)
