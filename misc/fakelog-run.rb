@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+require 'sigdump/setup'
 require 'emony/configuration'
 require 'emony/engine'
 

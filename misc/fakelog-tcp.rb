@@ -3,6 +3,9 @@ require 'json'
 require 'socket'
 
 sock = TCPSocket.new(ARGV[0], ARGV[1])
+Thread.new do 
+  nil while sock.gets
+end
 IO.popen([File.join(__dir__, 'fakelog.rb')], 'r') do |io|
   while line = io.gets
     data = JSON.parse(line)
