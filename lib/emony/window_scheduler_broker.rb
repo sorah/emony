@@ -44,10 +44,22 @@ module Emony
         specification = @config.window_specification_for_label(label)
 
         @schedulers[label.to_s] = sched = WindowScheduler.new(label, specification, init_time: init_time)
+
         @on_new_window_scheduler.call sched
         @ticker.register sched
+        sched.on_no_recent_record do
+          on_inactive_window_scheduler(sched)
+        end
 
         sched
+      end
+    end
+
+    def on_inactive_window_scheduler(scheduler)
+      @lock.synchronize do
+        # warn "Deregister #{scheduler}"
+        @schedulers.delete scheduler.label
+        @ticker.deregister scheduler
       end
     end
   end
