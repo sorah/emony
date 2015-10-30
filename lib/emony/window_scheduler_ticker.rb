@@ -19,12 +19,14 @@ module Emony
     end
 
     def register(scheduler)
+      # TODO: async
       @lock.synchronize do
         @set.add scheduler
       end
     end
 
     def deregister(scheduler)
+      # TODO: async
       @lock.synchronize do
         @set.delete scheduler
       end
@@ -77,8 +79,10 @@ module Emony
     end
 
     def tick_all
-      @set.each do |scheduler|
-        scheduler.tick
+      @lock.synchronize do
+        @set.each do |scheduler|
+          scheduler.tick
+        end
       end
     end
   end
