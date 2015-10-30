@@ -24,23 +24,24 @@ Emony aggregates log from servers and provides statistics in real-time.
 ``` yaml
 # vim: ft=yaml
 
-inputs:
-  - type: udp
-    listen: [::]:9800
-  - type: tcp
+sources:
+  - type: network
     listen: [::]:9800
   - type: tail
     file: /var/log/nginx/access.log
     format: ltsv
+    tag: nginx.access_log
+    filters:
+      - tagger:
+          operations:
+            - append:
+                key: server_name
   - type: exec
     command: ...
     format: ltsv
 
 aggregations:
-  # tag:
-  default:
-    key: server_name
-
+  $default:
     items:
       reqtime:
         # Aggregator type
