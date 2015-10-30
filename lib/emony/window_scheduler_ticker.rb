@@ -11,6 +11,7 @@ module Emony
       @thread = nil
       @stop = false
       @lock = Mutex.new
+      @op_queue = Queue.new
       @interval = interval
     end
 
@@ -19,17 +20,11 @@ module Emony
     end
 
     def register(scheduler)
-      # TODO: async
-      @lock.synchronize do
-        @set.add scheduler
-      end
+      @op_queue << [:register, scheduler]
     end
 
     def deregister(scheduler)
-      # TODO: async
-      @lock.synchronize do
-        @set.delete scheduler
-      end
+      @op_queue << [:deregister, scheduler]
     end
 
     def running?
@@ -63,12 +58,27 @@ module Emony
       self
     end
 
+    def perform_ops
+      while op = @op_queue.pop(:nonblock)
+        case op[0]
+        when :deregister
+          @set.delete op[1]
+        when :register
+          @set.add op[1]
+        else
+          raise '[BUG] unknown op'
+        end
+      end
+    rescue ThreadError
+    end
+
     private
 
     def main_loop
       loop do
         break if @stop
         begin
+          perform_ops()
           tick_all()
         rescue Exception => e
           $stderr.puts "#{self.inspect} thread encountered an error: #{e.class}: #{e.message}\n\t#{e.backtrace.join("\n\t")}"
@@ -79,10 +89,8 @@ module Emony
     end
 
     def tick_all
-      @lock.synchronize do
-        @set.each do |scheduler|
-          scheduler.tick
-        end
+      @set.each do |scheduler|
+        scheduler.tick
       end
     end
   end

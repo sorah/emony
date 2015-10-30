@@ -13,20 +13,27 @@ describe Emony::WindowSchedulerTicker do
   end
 
   describe "#register" do
+    before { ticker.start }
+    after { Timeout.timeout(2) { ticker.stop } }
     it "adds scheduler" do
       expect(ticker.schedulers).to eq([])
       ticker.register scheduler_a
+      100.times { break if ticker.schedulers.size != 0; sleep 0.01 }
       expect(ticker.schedulers).to eq([scheduler_a])
     end
   end
 
   describe "#deregister" do
+    after { Timeout.timeout(2) { ticker.stop } }
     before do
+      ticker.start
       ticker.register scheduler_a
       ticker.register scheduler_b
+      100.times { break if ticker.schedulers.size == 2; sleep 0.01 }
     end
     it "removes scheduler" do
       ticker.deregister scheduler_b
+      100.times { break if ticker.schedulers.size != 2; sleep 0.01 }
       expect(ticker.schedulers).to eq([scheduler_a])
     end
   end
