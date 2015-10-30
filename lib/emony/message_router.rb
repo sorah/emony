@@ -44,6 +44,7 @@ module Emony
     end
 
     def perform_merge(window)
+      # TODO: implement perform_merge
     end
 
     def perform_propagate(window)
