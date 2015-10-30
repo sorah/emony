@@ -6,7 +6,7 @@ require 'emony/window_scheduler_broker'
 describe Emony::WindowSchedulerBroker do
   before do
     allow(Emony::WindowScheduler).to receive(:new) do |label, speci|
-      double("window_scheduler: #{label}", label: label, spec: speci)
+      double("window_scheduler: #{label}", label: label, spec: speci, on_no_recent_record: nil)
     end
 
     allow(config).to receive(:aggregation_rule_for_tag) do |label, opt|
