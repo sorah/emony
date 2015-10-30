@@ -51,8 +51,16 @@ module Emony
           end
         end
       else
-        @hash[:aggregations][tag.to_sym] \
-          or raise ConfigurationMissing, "Missing configuration for label #{tag.inspect}"
+        match = @hash[:aggregations][tag.to_sym]
+        if match
+          match
+        else
+          if error
+            raise ConfigurationMissing, "Missing configuration for label #{tag.inspect}"
+          else
+            nil
+          end
+        end
       end
     end
 
