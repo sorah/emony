@@ -1,11 +1,13 @@
 #!/usr/bin/env ruby
 require 'json'
 
+$stdout.sync = true
+
 module Fakelog
   module SpeedModifiers
     class Sin
       def initialize(options = {})
-        @base = options[:base] || 100
+        @base = options[:base] || 1800
         @i = 1
       end
 
