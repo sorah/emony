@@ -41,6 +41,10 @@ module Emony
       end
     end
 
+    def inspect
+      "#<Emony::Label #{to_s.inspect}>"
+    end
+
     def to_h
       {tag: @tag, group: @group, group_key: @group_key, duration: @duration}
     end
