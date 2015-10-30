@@ -11,7 +11,7 @@ config = Emony::Configuration.new(
   aggregations: {
     '*' => {
       window: {duration: 5, wait: 1},
-      sub_windows: [{duration: 10, wait: 2}, {duration: 60, wait: 2}],
+      sub_windows: [{duration: 10, wait: 2, allowed_gap: 3}, {duration: 60, wait: 2, allowed_gap: 3}],
       items: {
         count: {type: :count},
         n: {type: :standard, key: 'n'},
