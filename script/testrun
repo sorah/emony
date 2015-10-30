@@ -15,6 +15,7 @@ config = Emony::Configuration.new(
       items: {
         count: {type: :count},
         n: {type: :standard, key: 'n'},
+        histo: {type: :histogram, key: 'n', width: 20},
       },
     },
   },
