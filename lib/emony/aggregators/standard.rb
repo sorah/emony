@@ -23,7 +23,7 @@ module Emony
 
       def aggregate(record)
         return unless record[key]
-        n = record[key].to_i
+        n = record[key].to_f
         @data[:total] += n
         @data[:count] += 1
 
