@@ -19,9 +19,9 @@ config = Emony::Configuration.new(
         n: {type: :standard, key: 'reqtime'},
         histo: {type: :histogram, key: 'reqtime', width: 20},
       },
-      #groups: {
-      #  path: {type: :path, key: 'path', default_level: 2},
-      #},
+      groups: {
+        path: {type: :path, key: 'path', default_level: 2},
+      },
     },
   },
   outputs: {

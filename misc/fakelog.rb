@@ -40,7 +40,7 @@ module Fakelog
       )
 
       def path
-        case rand(4)
+        case rand(2)
         when 0
           "/#{DIC.sample}"
         when 1
