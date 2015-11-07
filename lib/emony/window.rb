@@ -132,10 +132,10 @@ module Emony
 
     def add(record)
       unless applicable?(record) # XXX:
-        raise NotApplicable, "Record (time=#{record.time}) is not applicable to add into #{self.inspect}"
+        raise NotApplicable, "Record (time=#{record.time}, import=#{record.imported_time}) is not applicable to add into #{self.inspect}"
       end
       @lock.synchronize do
-        raise Finalized if finalized?
+        raise Finalized, "Window #{self.inspect} is finalized, cannot add any records (record: time=#{record.time}, import=#{record.imported_time})" if finalized?
         aggregators.each do |k, agg|
           agg.add record
         end
@@ -148,7 +148,7 @@ module Emony
         raise NotApplicable, "Window #{window.inspect} is not applicable to merge into #{self.inspect}"
       end
       @lock.synchronize do
-        raise Finalized if finalized?
+        raise Finalized, "Window #{self.inspect} is finalized, cannot merge any windows" if finalized?
 
         aggregators.each do |k, agg|
           agg.merge window.state[k] if window.state[k] # TODO: warn?

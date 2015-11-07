@@ -187,7 +187,7 @@ describe Emony::Window do
     end
 
     context "with record at not applicable time" do
-      let(:record) { double('record', time: start_time - 10) }
+      let(:record) { double('record', imported_time: Time.now, time: start_time - 10) }
 
       it "raises NotApplicable error" do
         expect {
@@ -197,7 +197,7 @@ describe Emony::Window do
     end
 
     context "after deadline" do
-      let(:record) { double('record', time: start_time + 2) }
+      let(:record) { double('record', imported_time: Time.now, time: start_time + 2) }
 
       before do
         allow(Time).to receive(:now).and_return(start_time + 15)

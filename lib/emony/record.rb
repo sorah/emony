@@ -3,12 +3,15 @@ module Emony
     def initialize(data, time_key: nil, tag: nil, config: nil)
       @data = data
       @tag = tag
+      @imported_time = Time.now
       @time_key = time_key || determine_time_key(config)
 
       unless @time_key
         @time = Time.now
       end
     end
+
+    attr_reader :imported_time
 
     # TODO: test
 
