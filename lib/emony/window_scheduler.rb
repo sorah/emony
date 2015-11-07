@@ -35,6 +35,8 @@ module Emony
     end
 
     def add(record)
+      retried ||= false
+
       @lock.synchronize do
         tick
 
@@ -44,9 +46,19 @@ module Emony
           active.add(record)
         end
       end
+    rescue Emony::Window::Finalized, Emony::Window::NotApplicable
+      unless retried
+        retried = true
+        #warn "WARN: Retry #{$!.inspect}"
+        retry
+      end
+
+      raise
     end
 
     def merge(window)
+      retried ||= false
+
       @lock.synchronize do
         tick
 
@@ -56,6 +68,14 @@ module Emony
           active.merge(window)
         end
       end
+    rescue Emony::Window::Finalized, Emony::Window::NotApplicable
+      unless retried
+        retried = true
+        #warn "WARN: Retry #{$!.inspect}"
+        retry
+      end
+
+      raise
     end
 
     def tick
