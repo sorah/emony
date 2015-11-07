@@ -66,8 +66,6 @@ module Emony
         true
       end
 
-      previous = @active
-
       # TODO: when tick couldn't run continously, window may have lacked
 
       if @waiting && @waiting.finalized?
@@ -84,14 +82,7 @@ module Emony
         @active = nil
       end
 
-      unless @active
-        if (Time.now - previous.finish) < 2 # XXX:
-          next_window_time = previous.finish
-        else
-          next_window_time = Time.now
-        end
-        @active = new_window(time: next_window_time)
-      end
+      @active ||= new_window
 
       nil
     ensure
