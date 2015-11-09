@@ -8,7 +8,7 @@ module Emony
     def initialize(label, specification, init_time: nil)
       @lock = Mutex.new
       @label = Emony::Label(label)
-      @specification = specification
+      @specification = { check_merge_applicability: false }.merge(specification)
       @on_result = proc { }
       @on_no_recent_record = proc { }
       @init_time = init_time
