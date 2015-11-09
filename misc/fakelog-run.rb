@@ -16,6 +16,7 @@ config = Emony::Configuration.new(
       sub_windows: [{duration: 10, wait: 2, allowed_gap: 3}, {duration: 60, wait: 2, allowed_gap: 3}],
       items: {
         count: {type: :count},
+        rps: {type: :persec},
         n: {type: :standard, key: 'reqtime'},
         histo: {type: :histogram, key: 'reqtime', width: 20},
       },
