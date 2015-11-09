@@ -93,11 +93,10 @@ describe Emony::WindowScheduler do
 
         window_scheduler.merge window
       end
-
     end
 
-    context "with record in inactive period" do
-      let(:window) { Emony::Window.new('label', start: time - 100, duration: 3) }
+    context "with window in unknown period" do
+      let(:window) { Emony::Window.new('label', start: time + 42, duration: 3) }
 
       before do
         window_scheduler.tick
@@ -105,10 +104,10 @@ describe Emony::WindowScheduler do
         window_scheduler.tick
       end
 
-      it "raises error" do
-        expect {
-          window_scheduler.merge window
-        }.to raise_error(Emony::Window::NotApplicable)
+      it "merges to active window" do
+        expect(window_scheduler.active).to receive(:merge).with(window)
+
+        window_scheduler.merge window
       end
     end
   end
