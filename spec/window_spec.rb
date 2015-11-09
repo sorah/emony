@@ -9,7 +9,9 @@ describe Emony::Window do
 
   let(:start_time) { Time.at(Time.now.to_i) } # XXX:
 
-  subject(:window) { described_class.new('label', start: start_time, duration: 10, wait: 2, aggregators: {a: aggregator_a, b: aggregator_b}) }
+  let(:check_merge_applicability) { true }
+
+  subject(:window) { described_class.new('label', start: start_time, duration: 10, wait: 2, aggregators: {a: aggregator_a, b: aggregator_b}, check_merge_applicability: check_merge_applicability) }
 
   describe "#aggregators" do
     context "when initialied with Hash values" do
@@ -278,6 +280,35 @@ describe Emony::Window do
         expect {
           window.merge another_window
         }.to raise_error(Emony::Window::Finalized)
+      end
+    end
+
+    context "with window with check_merge_applicability=false" do
+      let(:check_merge_applicability) { false }
+
+      context "with window at not appliciable time" do
+        let(:another_window) { double('window', start: start_time - 100, finish: start_time + 10 - 100 , state: {a: aggregator_a2.state, b: aggregator_b2.state}, result: {a: aggregator_a2.result, b: aggregator_b2.result}) }
+
+        it "merges it forcefully" do
+          expect(aggregator_a).to receive(:merge).with(:state_a2)
+          expect(aggregator_b).to receive(:merge).with(:state_b2)
+
+          window.merge another_window
+        end
+      end
+
+      context "after deadline" do
+        let(:another_window) { double('window', start: start_time, finish: start_time + 10, state: {a: aggregator_a2.state, b: aggregator_b2.state}, result: {a: aggregator_a2.result, b: aggregator_b2.result}) }
+
+        before do
+          allow(Time).to receive(:now).and_return(start_time + 15)
+        end
+
+        it "raises Finalized error" do
+          expect {
+            window.merge another_window
+          }.to raise_error(Emony::Window::Finalized)
+        end
       end
     end
   end

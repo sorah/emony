@@ -8,12 +8,13 @@ module Emony
     class Finalized < StandardError; end
     class NotApplicable < StandardError; end
 
-    def initialize(label, start: , duration: , wait: 0, allowed_gap: 0, aggregators: {})
+    def initialize(label, start: , duration: , wait: 0, allowed_gap: 0, aggregators: {}, check_merge_applicability: true)
       @label = Emony::Label(label)
       @start = Time.at(start.to_i) # drop usec
       @duration = duration.to_i
       @wait = wait.to_i
       @allowed_gap = allowed_gap.to_i
+      @check_merge_applicability = check_merge_applicability
 
       @aggregators = aggregators.dup
       @aggregators.each do |k,v|
@@ -29,6 +30,10 @@ module Emony
     end
 
     attr_reader :label, :start, :duration, :wait, :aggregators, :allowed_gap
+
+    def check_merge_applicability?
+      @check_merge_applicability
+    end
 
     def empty?
       @empty
@@ -144,7 +149,7 @@ module Emony
     end
 
     def merge(window)
-      unless applicable_window?(window)
+      unless applicable_window?(window) || !check_merge_applicability?
         raise NotApplicable, "Window #{window.inspect} is not applicable to merge into #{self.inspect}"
       end
       @lock.synchronize do
