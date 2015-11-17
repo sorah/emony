@@ -1,13 +1,17 @@
 module Emony
   class Record
-    def initialize(data, time_key: nil, tag: nil, config: nil)
+    def initialize(data, time_key: nil, time: nil, tag: nil, config: nil)
       @data = data
       @tag = tag
+      @time = time
       @imported_time = Time.now
-      @time_key = time_key || determine_time_key(config)
 
-      unless @time_key
-        @time = Time.now
+      unless @time
+        if @time_key
+          @time_key = time_key || determine_time_key(config)
+        else
+          @time = Time.now
+        end
       end
     end
 
@@ -19,10 +23,14 @@ module Emony
       @time ||= parse_time
     end
 
-    attr_reader :data, :tag
+    attr_reader :data, :tag, :time_key
 
     def [](k)
       @data[k]
+    end
+
+    def merge(h)
+      self.class.new(@data.merge(h), time: time, tag: tag)
     end
 
     private
