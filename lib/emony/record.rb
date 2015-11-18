@@ -7,7 +7,7 @@ module Emony
       @imported_time = Time.now
 
       unless @time
-        if @time_key
+        if time_key
           @time_key = time_key || determine_time_key(config)
         else
           @time = Time.now
