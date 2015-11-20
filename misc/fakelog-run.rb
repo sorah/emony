@@ -9,6 +9,17 @@ config = Emony::Configuration.new(
       type: :network,
     }
   ],
+  filters: {
+    '*' => [
+      {
+        type: :numeric,
+        key: 'reqtime',
+        float: true,
+        result_in_float: false,
+        op: [multiply: 1000],
+      },
+    ],
+  },
   aggregations: {
     '*' => {
       time: 'time',

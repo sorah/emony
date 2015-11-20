@@ -6,6 +6,7 @@ require 'emony/output_router'
 require 'emony/window_scheduler_ticker'
 require 'emony/window_scheduler_broker'
 require 'emony/grouper_cache'
+require 'emony/filter_chain_cache'
 
 module Emony
   class Engine
@@ -87,8 +88,12 @@ module Emony
       @grouper_cache ||= GrouperCache.new(config)
     end
 
+    def filter_chain_cache
+      @filter_chain_cache ||= FilterChainCache.new(config)
+    end
+
     def message_router
-      @message_router ||= MessageRouter.new(window_scheduler_broker, grouper_cache)
+      @message_router ||= MessageRouter.new(window_scheduler_broker, grouper_cache, filter_chain_cache)
     end
 
     def output_router

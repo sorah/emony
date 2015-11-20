@@ -7,9 +7,10 @@ module Emony
     include Emony::Utils::OperationThreadable
     # TODO: test
 
-    def initialize(window_scheduler_broker, grouper_cache)
+    def initialize(window_scheduler_broker, grouper_cache, filter_chain_cache)
       @broker = window_scheduler_broker
       @grouper_cache = grouper_cache
+      @filter_chain_cache = filter_chain_cache
 
       @lock = Mutex.new
       init_operation_threading
@@ -41,6 +42,11 @@ module Emony
     end
 
     def perform_add(record)
+      filter_chain = @filter_chain_cache.tag(record.tag)
+      if filter_chain
+        record = filter_chain.filter(record)
+      end
+
       begin
         @broker.get(record.tag).add(record)
       rescue Emony::Window::NotApplicable, Emony::Window::Finalized => e

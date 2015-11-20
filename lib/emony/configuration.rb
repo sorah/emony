@@ -13,7 +13,10 @@ module Emony
     def initialize(hash={})
       @hash = symbolize_keys!(hash)
       @hash[:aggregations] ||= {}
+      @hash[:filters] ||= {}
+
       @rule_matcher = TagMatching::Matcher.new(@hash[:aggregations].keys)
+      @filter_rule_matcher = TagMatching::Matcher.new(@hash[:filters].keys)
     end
 
     def [](k)
@@ -66,6 +69,15 @@ module Emony
           end
         end
       end
+    end
+
+    def filter_rule_name_for_tag(tag) # TODO: test
+      @filter_rule_matcher.find(tag)
+    end
+
+    def filter_rule_for_tag(tag) # TODO: test
+      name = filter_rule_name_for_tag(tag)
+      name && @hash[:filters][name]
     end
 
     private
