@@ -6,7 +6,7 @@ module Emony
         constant_name = name.to_s.gsub(/\A.|_./) { |s| s[-1].upcase }
 
         begin
-          const.const_get constant_name
+          const.const_get constant_name, false
         rescue NameError
           unless retried
             begin
