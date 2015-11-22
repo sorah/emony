@@ -7,11 +7,7 @@ module Emony
       @imported_time = Time.now
 
       unless @time
-        if time_key
-          @time_key = time_key || determine_time_key(config)
-        else
-          @time = Time.now
-        end
+        @time_key = time_key || determine_time_key(config)
       end
     end
 
@@ -20,7 +16,7 @@ module Emony
     # TODO: test
 
     def time
-      @time ||= parse_time
+      @time ||= parse_time || imported_time
     end
 
     attr_reader :data, :tag, :time_key
@@ -37,13 +33,15 @@ module Emony
 
     def parse_time
       d = data[@time_key]
+
       case d
       when Time
         d
       when String
         Time.parse(d)
       else
-        raise "[BUG] parse_time called with #{d.inspect}"
+        # raise "[BUG] parse_time called with #{d.inspect}"
+        nil
       end
     end
 
