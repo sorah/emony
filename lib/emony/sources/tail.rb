@@ -109,17 +109,7 @@ module Emony
             end
           end
 
-          lines = buf.split(/\r?\n/)
-          case
-          when lines.size > 1
-            buf = lines.pop
-            lines.each do |line|
-              line_processor.process line
-            end
-          when /\r?\n\z/ === buf
-            line_processor.process lines[0]
-            buf = ""
-          end
+          buf = process_buffer(buf)
 
           break if close
         end
@@ -129,6 +119,22 @@ module Emony
           Process.kill :INT, tail_io.pid
           tail_io.close
         end
+      end
+
+      def process_buffer(buf)
+        lines = buf.split(/\r?\n/)
+        case
+        when lines.size > 1
+          buf = lines.pop
+          lines.each do |line|
+            line_processor.process line
+          end
+        when /\r?\n\z/ === buf
+          line_processor.process lines[0]
+          buf = ""
+        end
+
+        buf
       end
 
       def process_message(message)
