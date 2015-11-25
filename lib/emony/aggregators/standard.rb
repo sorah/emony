@@ -31,10 +31,10 @@ module Emony
       end
 
       def aggregate_merge(state)
-        @data[:total] += state[:total]
-        @data[:count] += state[:count]
+        @data[:total] += state[:total] || state['total']
+        @data[:count] += state[:count] || state['count']
 
-        calculate(min: state[:min], max: state[:max])
+        calculate(min: state[:min] || state['min'], max: state[:max] || state['min'])
       end
 
       private

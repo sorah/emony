@@ -23,12 +23,12 @@ module Emony
       def aggregate(record)
         val = record[key]
         return unless val
-        @data[val] += 1
+        @data[val.to_s] += 1
       end
 
       def aggregate_merge(state)
         state.each do |k, v|
-          @data[k] += v
+          @data[k.to_s] += v
         end
       end
     end

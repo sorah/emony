@@ -18,13 +18,17 @@ module Emony
       end
 
       def aggregate_merge(state)
-        if @state[:tail].nil? || state[:tail] < @state[:tail]
-          @state[:tail] = state[:tail]
+        tail = state[:tail] || state['tail']
+        head = state[:head] || state['head']
+        count = state[:count] || state['count']
+
+        if @state[:tail].nil? || tail < @state[:tail]
+          @state[:tail] = tail
         end
-        if @state[:head].nil? || @state[:head] < state[:head]
-          @state[:head] = state[:head]
+        if @state[:head].nil? || @state[:head] < head
+          @state[:head] = head
         end
-        @state[:count] += state[:count] || 0
+        @state[:count] += count || 0
 
         calculate!
       end
