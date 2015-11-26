@@ -20,6 +20,8 @@ module Emony
       @state = state
       @result = result
       @check_merge_applicability = check_merge_applicability
+
+      raise "missing values" unless @label && @id && @start && @duration && @state && @result
     end
 
     def check_merge_applicability?
