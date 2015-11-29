@@ -10,6 +10,10 @@ module Emony
         @result = nil
       end
 
+      def state
+        {count: @state[:count], tail: @state[:tail].to_i, head: @state[:head].to_i}
+      end
+
       def aggregate(record)
         @state[:count] += 1
         @state[:tail] = record.time if @state[:tail].nil? || record.time < @state[:tail]
@@ -18,8 +22,8 @@ module Emony
       end
 
       def aggregate_merge(state)
-        tail = state[:tail] || state['tail']
-        head = state[:head] || state['head']
+        tail = Time.at(state[:tail] || state['tail'])
+        head = Time.at(state[:head] || state['head'])
         count = state[:count] || state['count']
 
         if @state[:tail].nil? || tail < @state[:tail]
