@@ -41,6 +41,10 @@ module Emony
       end
     end
 
+    def to_msgpack(out = String.new)
+      to_s.to_msgpack(out)
+    end
+
     def inspect
       "#<Emony::Label #{to_s.inspect}>"
     end
