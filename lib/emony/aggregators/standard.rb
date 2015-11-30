@@ -40,7 +40,7 @@ module Emony
       private
 
       def calculate(min: nil, max: nil)
-        @data[:average] = @data[:total] / @data[:count]
+        @data[:average] = @data[:count] > 0 ? @data[:total] / @data[:count] : nil
 
         if @data[:min]
           @data[:min] = min if min && min < @data[:min]
