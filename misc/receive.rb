@@ -7,19 +7,9 @@ config = Emony::Configuration.new(
   sources: [
     {
       type: :network,
+      port: 37867,
     }
   ],
-  filters: {
-    '*' => [
-      {
-        type: :numeric,
-        key: 'reqtime',
-        float: true,
-        result_in_float: false,
-        op: [multiply: 1000],
-      },
-    ],
-  },
   aggregations: {
     '*' => {
       time: 'time',
@@ -37,7 +27,7 @@ config = Emony::Configuration.new(
     },
   },
   outputs: {
-    '*' => {type: :copy, outputs: [{type: :stdout}, {type: :forward, host: 'localhost', port: 37867}]},
+    '*' => {type: :stdout},
   },
 )
 engine = Emony::Engine.new(config)
