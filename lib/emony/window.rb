@@ -156,7 +156,8 @@ module Emony
         raise Finalized, "Window #{self.inspect} is finalized, cannot merge any windows" if finalized?
 
         aggregators.each do |k, agg|
-          agg.merge window.state[k] if window.state[k] # TODO: warn?
+          state = window.state[k.to_s] || window.state[k.to_sym] # XXX:
+          agg.merge state if state # TODO: warn?
         end
         @empty = false
       end
