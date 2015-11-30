@@ -4,6 +4,7 @@ require 'yajl'
 require 'json'
 require 'msgpack'
 require 'emony/sources/base'
+require 'emony/finalized_window'
 
 module Emony
   module Sources
@@ -74,6 +75,8 @@ module Emony
         case
         when message['data'] && message['tag']
           create_record message['tag'], message['data']
+        when message['window']
+          merge_window message['window']
         end
 
         id = message.kind_of?(Hash) && message['id']

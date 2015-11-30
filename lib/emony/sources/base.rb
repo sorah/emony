@@ -9,7 +9,7 @@ module Emony
       end
 
       attr_reader :options, :config
-      attr_accessor :on_record
+      attr_accessor :on_record, :on_window
 
       def start
         raise NotImplementedError
@@ -30,6 +30,23 @@ module Emony
         if on_record
           on_record.call record
         end
+      end
+
+      def merge_window(raw_window)
+        return unless on_window
+
+        window = case raw_window
+        when Hash
+          FinalizedWindow.from_hash(raw_window)
+        when Array
+          FinalizedWindow.from_array(raw_window)
+        when FinalizedWindow
+          raw_window
+        when Window
+          raw_window.finalized_window
+        end
+
+        on_window.call window
       end
     end
   end

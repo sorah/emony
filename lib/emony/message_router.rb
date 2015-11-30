@@ -66,7 +66,11 @@ module Emony
     end
 
     def perform_merge(window)
-      # TODO: implement perform_merge
+      begin
+        @broker.get(window.label).merge(window)
+      rescue Emony::Window::NotApplicable, Emony::Window::Finalized => e
+        warn "WARN: #{window.label} #{e.inspect}"
+      end
     end
 
     def perform_propagate(window)

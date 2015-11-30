@@ -57,6 +57,10 @@ module Emony
       message_router.add record
     end
 
+    def on_window(window)
+      message_router.merge window
+    end
+
     def on_new_window_scheduler(scheduler)
       scheduler.on_result &method(:on_finalized_window)
     end
@@ -70,6 +74,7 @@ module Emony
       @sources ||= config[:sources].map do |v|
         Sources.find(v[:type]).new(v.merge(config: @config)).tap do |source|
           source.on_record = method(:on_record)
+          source.on_window = method(:on_window)
         end
       end
     end
