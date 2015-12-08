@@ -20,10 +20,12 @@ module Emony
       def teardown
         if @tcp_socket
           @tcp_socket.close
+          @tcp_socket = nil
         end
 
         if @udp_socket
           @udp_socket.close
+          @udp_socket = nil
         end
       end
 
