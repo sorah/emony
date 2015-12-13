@@ -44,30 +44,19 @@ module Emony
 
     def aggregation_rule_for_tag(tag, pattern: true, error: false)
       # XXX: to_sym
-      if pattern
+      rule = if pattern
         # XXX: rule_matcher -> tag_matcher
         match = rule_name_for_tag(tag)
-        if match
-          @hash[:aggregations][match.to_sym]
-        else
-          if error
-            raise ConfigurationMissing, "Missing configuration for label #{tag.inspect}"
-          else
-            nil
-          end
-        end
+        match && @hash[:aggregations][match.to_sym]
       else
-        match = @hash[:aggregations][tag.to_sym]
-        if match
-          match
-        else
-          if error
-            raise ConfigurationMissing, "Missing configuration for label #{tag.inspect}"
-          else
-            nil
-          end
-        end
+        @hash[:aggregations][tag.to_sym]
       end
+
+      if error && rule.nil?
+        raise ConfigurationMissing, "Missing configuration for label #{tag.inspect}"
+      end
+
+      rule
     end
 
     def filter_rule_name_for_tag(tag) # TODO: test
