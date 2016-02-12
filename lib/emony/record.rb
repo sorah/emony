@@ -1,6 +1,6 @@
 module Emony
   class Record
-    def initialize(data, time_key: nil, time: nil, tag: nil, config: nil)
+    def initialize(data, time_key: nil, time_parser: nil, time: nil, tag: nil, config: nil)
       @data = data
       @tag = tag
       @time = time
@@ -8,6 +8,7 @@ module Emony
 
       unless @time
         @time_key = time_key || determine_time_key(config)
+        @time_parser = time_parser == false ? nil : (time_parser || determine_time_parser(config)) # XXX:
       end
     end
 
@@ -19,7 +20,7 @@ module Emony
       @time ||= parse_time || imported_time
     end
 
-    attr_reader :data, :tag, :time_key
+    attr_reader :data, :tag, :time_key, :time_parser
 
     def [](k)
       @data[k]
@@ -38,9 +39,23 @@ module Emony
       when Time
         d
       when String
-        Time.parse(d)
+        if time_parser
+          time_parser.exec(d)
+        else
+          Time.parse(d)
+        end
+      when Integer
+        Time.at(d)
       else
         # raise "[BUG] parse_time called with #{d.inspect}"
+        nil
+      end
+    end
+
+    def determine_time_parser(config)
+      if config
+        config.time_parser_for_tag(@tag)
+      else
         nil
       end
     end

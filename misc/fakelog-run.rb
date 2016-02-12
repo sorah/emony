@@ -23,6 +23,7 @@ config = Emony::Configuration.new(
   aggregations: {
     '*' => {
       time: 'time',
+      time_format: '%Y-%m-%d %H:%M:%S',
       window: {duration: 5, wait: 1},
       sub_windows: [{duration: 10, wait: 2, allowed_gap: 3}, {duration: 60, wait: 2, allowed_gap: 3}],
       items: {

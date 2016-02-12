@@ -1,4 +1,5 @@
 require 'yaml'
+require 'strptime'
 require 'emony/tag_matching/matcher'
 require 'emony/tag_parser'
 
@@ -17,6 +18,7 @@ module Emony
 
       @rule_matcher = TagMatching::Matcher.new(@hash[:aggregations].keys)
       @filter_rule_matcher = TagMatching::Matcher.new(@hash[:filters].keys)
+      @time_parsers = {}
     end
 
     def [](k)
@@ -40,6 +42,22 @@ module Emony
 
     def rule_name_for_tag(tag)
       @rule_matcher.find(tag)
+    end
+
+    def time_parser_for_tag(tag) # XXX: test
+      match = rule_name_for_tag(tag)
+      return nil unless match
+
+      parser = (@time_parsers[match] ||= begin
+        format = aggregation_rule_for_tag(match, pattern: false, error: true)[:time_format]
+        if format
+          Strptime.new(format)
+        else
+          :no_format
+        end
+      end)
+
+      parser != :no_format ? parser : nil
     end
 
     def aggregation_rule_for_tag(tag, pattern: true, error: false)

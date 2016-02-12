@@ -27,10 +27,11 @@ describe Emony::Record do
         end
       end
 
-      context "when config given" do
+      context "when config given (without parser)" do
         let(:config) do
           double('config').tap do |c|
             allow(c).to receive(:aggregation_rule_for_tag).with('x').and_return(time: :time)
+            allow(c).to receive(:time_parser_for_tag).with('x').and_return(nil)
           end
         end
 
@@ -41,6 +42,8 @@ describe Emony::Record do
         end
       end
 
+
+
       context "when config given but no key for tag" do
         before do
           allow(Time).to receive(:now).and_return(t-1)
@@ -49,6 +52,7 @@ describe Emony::Record do
         let(:config) do
           double('config').tap do |c|
             allow(c).to receive(:aggregation_rule_for_tag).with('x').and_return(nil)
+            allow(c).to receive(:time_parser_for_tag).with('x').and_return(nil)
           end
         end
 
@@ -65,7 +69,7 @@ describe Emony::Record do
           double('config') # no mock, it shouldn't receive anything
         end
 
-        let(:options) { {time_key: :time, config: config, tag: 'x'} }
+        let(:options) { {time_key: :time, time_parser: false, config: config, tag: 'x'} }
 
         it "uses from time_key" do
           expect(record_time).to eq(t)
@@ -102,10 +106,27 @@ describe Emony::Record do
         let(:t) { t0-100 }
         it { is_expected.to eq(t0-100) }
       end
+
       context "when String" do
-        let(:t0) { (Time.now-100) }
-        let(:t) { t0.to_s }
-        it { is_expected.to eq(Time.parse(t)) }
+        context "without config" do
+          let(:t0) { (Time.now-100) }
+          let(:t) { t0.to_s }
+          it { is_expected.to eq(Time.parse(t)) }
+        end
+
+        context "when config given" do
+          let(:t0) { (Time.now-100) }
+          let(:t) { t0.strftime('%Y%m%d%H%M%S') }
+          let(:config) do
+            double('config').tap do |c|
+              allow(c).to receive(:time_parser_for_tag).with('x').and_return(Strptime.new('%Y%m%d%H%M%S'))
+            end
+          end
+
+          let(:options) { {time_key: :time, config: config, tag: 'x'} }
+
+          it { is_expected.to eq(Time.strptime(t, '%Y%m%d%H%M%S')) }
+        end
       end
     end
   end

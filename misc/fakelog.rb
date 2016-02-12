@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'json'
+require 'time'
 
 $stdout.sync = true
 
@@ -118,7 +119,7 @@ module Fakelog
         tick
         t = Time.now
         speed_modifier.value.times.map do
-          information_generators.inject({}) { |r,g| r.merge!(g.value); g.tick; r }.merge(time: t)
+          information_generators.inject({}) { |r,g| r.merge!(g.value); g.tick; r }.merge(time: t.strftime('%Y-%m-%d %H:%M:%S'))
         end
       end
     end

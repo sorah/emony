@@ -22,6 +22,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "msgpack"
   spec.add_dependency "sigdump"
   spec.add_dependency "yajl-ruby"
+  spec.add_dependency "strptime"
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake"
