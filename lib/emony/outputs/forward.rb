@@ -33,7 +33,7 @@ module Emony
         return unless window.label.primary?
         msg = {window: window.to_a}.to_msgpack
 
-        if msg.bytesize > @tcp_threshold
+        if @tcp_only || msg.bytesize > @tcp_threshold
           send_tcp msg
         else
           send_udp msg
